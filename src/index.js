@@ -12,6 +12,11 @@ const isNumber = (arg) => {
   }
 };
 
+if (process.argv.length < 3) {
+  console.log('Usage: node ' + process.argv[1] + ' FILENAME');
+  process.exit(1);
+}
+
 const a = isNumber('a');
 const b = isNumber('b');
 const c = isNumber('c');
@@ -35,5 +40,23 @@ const solveEquation = (a, b, c) => {
     console.log(`There are 2 roots\nx1 = ${x1}\nx2 = ${x2}`);
   }
 };
+
+const fs = require('fs');
+const filename = process.argv[2];
+fs.readFile(filename, 'utf8', function(err, data) {
+  const arg = data.split('\\n')[0].split('\\s');
+
+  for (const i of arg) {
+    if (isNaN(i)) {
+      console.error('Invalid file format');
+      process.exit(1);
+    }
+  }
+
+  if (parseFloat(arg[0]) === 0) {
+    console.error('Cannot be 0');
+    process.exit(1);
+  } else solveEquation(arg[0], arg[1], arg[2]);
+});
 
 solveEquation(a, b, c);
