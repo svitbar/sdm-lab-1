@@ -1,10 +1,16 @@
-/* eslint-disable require-jsdoc */
 const prompt = require('prompt-sync')();
 const fs = require('fs');
 const filename = process.argv[2];
 
 const isNumber = (arg) => {
   const res = prompt(`\x1b[0m${arg} = \x1b[32m`);
+
+  if (arg === 'a' && parseFloat(res) === 0) {
+    const error = `Error. A cannot be 0`;
+    console.log(`\x1b[0m${error}`);
+
+    return isNumber(arg);
+  }
 
   if (!isNaN(res)) return res;
   else {
@@ -36,6 +42,11 @@ const solveEquation = (a, b, c) => {
 };
 
 const nonInteractive = () => {
+  if (!fs.existsSync(filename)) {
+    console.error(`Error. File ${filename} do not exists`);
+    process.exit(1);
+  }
+
   const data = fs.readFileSync(filename, 'utf8');
   const arg = data.split('\\n')[0].split('\\s');
 
