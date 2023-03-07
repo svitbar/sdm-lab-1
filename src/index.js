@@ -1,5 +1,7 @@
 /* eslint-disable require-jsdoc */
 const prompt = require('prompt-sync')();
+const fs = require('fs');
+const filename = process.argv[2];
 
 const isNumber = (arg) => {
   const res = prompt(`\x1b[0m${arg} = \x1b[32m`);
@@ -33,32 +35,34 @@ const solveEquation = (a, b, c) => {
   }
 };
 
-const fs = require('fs');
-const filename = process.argv[2];
+const nonInteractive = () => {
+  const data = fs.readFileSync(filename, 'utf8');
+  const arg = data.split('\\n')[0].split('\\s');
+
+  for (const i of arg) {
+    if (isNaN(i)) {
+      console.error('Error. Invalid file format');
+      process.exit(1);
+    }
+  }
+
+  if (parseFloat(arg[0]) === 0) {
+    console.error('Error. A cannot be 0');
+    process.exit(1);
+  } else solveEquation(arg[0], arg[1], arg[2]);
+};
+
+const interactive = () => {
+  const a = isNumber('a');
+  const b = isNumber('b');
+  const c = isNumber('c');
+
+  solveEquation(a, b, c);
+};
 
 function start() {
-  if (process.argv[2]) {
-    const data = fs.readFileSync(filename, 'utf8');
-    const arg = data.split('\\n')[0].split('\\s');
-
-    for (const i of arg) {
-      if (isNaN(i)) {
-        console.error('Error. Invalid file format');
-        process.exit(1);
-      }
-    }
-
-    if (parseFloat(arg[0]) === 0) {
-      console.error('Error. A cannot be 0');
-      process.exit(1);
-    } else solveEquation(arg[0], arg[1], arg[2]);
-  } else {
-    const a = isNumber('a');
-    const b = isNumber('b');
-    const c = isNumber('c');
-
-    solveEquation(a, b, c);
-  }
+  if (process.argv[2]) nonInteractive();
+  else interactive();
 }
 
 start();
