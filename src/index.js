@@ -1,3 +1,4 @@
+/* eslint-disable require-jsdoc */
 const prompt = require('prompt-sync')();
 
 const isNumber = (arg) => {
@@ -11,15 +12,6 @@ const isNumber = (arg) => {
     return isNumber(arg);
   }
 };
-
-if (process.argv.length < 3) {
-  console.log('Usage: node ' + process.argv[1] + ' FILENAME');
-  process.exit(1);
-}
-
-const a = isNumber('a');
-const b = isNumber('b');
-const c = isNumber('c');
 
 const solveEquation = (a, b, c) => {
   console.log(`\x1b[0mEquation is: (${a}) x^2 + (${b}) x + (${c}) = 0`);
@@ -43,20 +35,30 @@ const solveEquation = (a, b, c) => {
 
 const fs = require('fs');
 const filename = process.argv[2];
-fs.readFile(filename, 'utf8', function(err, data) {
-  const arg = data.split('\\n')[0].split('\\s');
 
-  for (const i of arg) {
-    if (isNaN(i)) {
-      console.error('Invalid file format');
-      process.exit(1);
+function start() {
+  if (process.argv[2]) {
+    const data = fs.readFileSync(filename, 'utf8');
+    const arg = data.split('\\n')[0].split('\\s');
+
+    for (const i of arg) {
+      if (isNaN(i)) {
+        console.error('Error. Invalid file format');
+        process.exit(1);
+      }
     }
+
+    if (parseFloat(arg[0]) === 0) {
+      console.error('Error. A cannot be 0');
+      process.exit(1);
+    } else solveEquation(arg[0], arg[1], arg[2]);
+  } else {
+    const a = isNumber('a');
+    const b = isNumber('b');
+    const c = isNumber('c');
+
+    solveEquation(a, b, c);
   }
+}
 
-  if (parseFloat(arg[0]) === 0) {
-    console.error('Cannot be 0');
-    process.exit(1);
-  } else solveEquation(arg[0], arg[1], arg[2]);
-});
-
-solveEquation(a, b, c);
+start();
