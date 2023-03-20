@@ -5,8 +5,8 @@ const filename = process.argv[2];
 const isNumber = (arg) => {
   const res = prompt(`\x1b[0m${arg} = \x1b[32m`);
 
-  if (arg === 'a' && parseFloat(res) === 0) {
-    const error = `Error. A cannot be 0`;
+  if (arg === 'a' && (res === '' || parseFloat(res) === 0)) {
+    const error = `Error. A cannot be empty or 0`;
     console.log(`\x1b[0m${error}`);
 
     return isNumber(arg);
